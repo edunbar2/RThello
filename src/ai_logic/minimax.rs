@@ -110,10 +110,18 @@ fn evaluate(state: &board::Board, maximizing_player: bool, depth: i32) -> i32{
     };
 
     // Player pieces
+    let mut piece_weight: i32 = 5;
+    if depth > 10 && depth < 30{
+        piece_weight = 12;
+    }
+
+    if depth > 30 {
+        piece_weight = 25;
+    }
     let player_pieces = state.get_pieces(player_color) as i32;
     let opponent_pieces = state.get_pieces(opponent_color) as i32;
     let piece_count = player_pieces - opponent_pieces;
-    score += piece_count * calculate_piece_importance(depth);
+    score += piece_count * piece_weight;
     // Winning position
     if board::Board::check_game_over(&state) {
         if player_pieces > opponent_pieces{
@@ -207,10 +215,3 @@ fn is_stable_square(piece: &u64) -> bool {
     false
 }
 
-fn calculate_piece_importance(x: i32) -> i32 {
-    print!("depth {}", x);
-    let k = -20;
-    let y = 40 * 2_i32.pow(((64 - x) / k) as u32);
-    print!("importance: {}\n", y);
-    y
-}
